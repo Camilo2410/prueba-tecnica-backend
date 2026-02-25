@@ -1,0 +1,1 @@
+from apps.users.infrastructure.admin import *  # noqa
