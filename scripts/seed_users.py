@@ -1,4 +1,11 @@
 import os
+import sys
+from pathlib import Path
+
+# Agregar la raíz del proyecto al PYTHONPATH
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+
 import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
@@ -32,16 +39,18 @@ def run():
     ]
 
     for data in users:
-        email = data["email"]
+        payload = data.copy()  # importante para no mutar la lista original
+        email = payload["email"]
+
         if User.objects.filter(email=email).exists():
             print(f"Ya existe: {email}")
             continue
 
-        password = data.pop("password")
-        if data.get("is_superuser"):
-            User.objects.create_superuser(password=password, **data)
+        password = payload.pop("password")
+        if payload.get("is_superuser"):
+            User.objects.create_superuser(password=password, **payload)
         else:
-            User.objects.create_user(password=password, **data)
+            User.objects.create_user(password=password, **payload)
 
         print(f"Creado: {email}")
 
