@@ -6,7 +6,8 @@ from apps.users.infrastructure.models import User
 class DjangoUserRepository(UserRepositoryPort):
     def create(self, data: dict):
         password = data.pop("password")
-        return User.objects.create_user(password=password, **data)
+        data.pop("is_active", None)  # por si alguien lo manda igual
+        return User.objects.create_user(password=password, is_active=True, **data)
 
     def list(self):
         return User.objects.all()
